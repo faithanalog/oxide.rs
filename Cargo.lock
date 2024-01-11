@@ -1923,6 +1923,7 @@ dependencies = [
  "chrono",
  "clap",
  "futures",
+ "http 0.2.11",
  "progenitor-client 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand",
  "regress",

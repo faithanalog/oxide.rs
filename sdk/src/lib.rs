@@ -15,4 +15,29 @@ mod generated_sdk;
 #[cfg(feature = "clap")]
 mod clap_feature;
 
+use std::time::Duration;
+
 pub use generated_sdk::*;
+use reqwest::{header::HeaderValue, ClientBuilder};
+
+impl Client {
+    /// Create a client which adds a specified authentication token to all
+    /// requests. If you have logged into the API with the oxide CLI, you can
+    /// find an authentication token in your `$HOME/.config/oxide/hosts.toml`
+    /// file.
+    pub fn new_with_auth_token(baseurl: &str, token: &str) -> Self {
+        let mut client_builder = ClientBuilder::new().connect_timeout(Duration::from_secs(15));
+
+        let mut bearer = HeaderValue::from_str(format!("Bearer {}", token).as_str()).unwrap();
+        bearer.set_sensitive(true);
+        client_builder = client_builder.default_headers(
+            [(http::header::AUTHORIZATION, bearer)]
+                .into_iter()
+                .collect(),
+        );
+
+        let client = client_builder.build().unwrap();
+
+        Client::new_with_client(baseurl, client)
+    }
+}
